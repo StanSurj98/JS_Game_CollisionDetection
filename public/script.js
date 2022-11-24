@@ -44,3 +44,11 @@ class Explosion {
     );
   }
 }
+
+
+// We will add events to call the cloud animation now
+window.addEventListener("click", function(e) {
+  console.log("Clicked: ", e);
+  ctx.fillStyle = 'white';
+  ctx.fillRect(e.x, e.y, 50, 50);
+})
