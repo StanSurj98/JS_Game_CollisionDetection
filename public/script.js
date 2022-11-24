@@ -56,14 +56,25 @@ class Explosion {
   }
 }
 
-// ---- Add events to call the cloud animation now
-window.addEventListener("click", function (e) {
+// ---- Main Explosion Function
+const createExplosion = (e) => {
   // console.log("Clicked: ", e);
   let positionX = e.x - canvasPosition.left;
   let positionY = e.y - canvasPosition.top;
   // Store our active explosions into the empty array
   explosions.push(new Explosion(positionX, positionY));
+}
+
+
+// ---- Add events to call new explosion
+window.addEventListener("click", function (e) {
+  createExplosion(e);
 });
+// This is on mouse move like a trail effect!
+// window.addEventListener("mousemove", function(e) {
+//   createExplosion(e);
+// });
+
 
 // ---- Main Animation Sequences
 const animate = () => {
