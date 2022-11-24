@@ -21,9 +21,9 @@ class Explosion {
     this.height = this.spriteHeight * 0.7;
     // Multiplication is more performant in JS, so instead of x / 2 => x * 0.5
 
-    // It makes sense to offset for centering INSIDE class since we have access to size
-    this.x = x - this.width * 0.5; // again, for centering offset by half its dimensions
-    this.y = y - this.height * 0.5;
+    // We moved offset logic below in .drawImage() because of rotating the animation
+    this.x = x;
+    this.y = y;
 
     // Sprite Img Source
     this.image = new Image();
@@ -34,8 +34,16 @@ class Explosion {
     this.timer = 0;
     // For Rotating Animation
     this.angle = Math.random() * 6.2; // Roughly the Radian of a circle 360deg
+
+    // Sounds
+    this.sound = new Audio();
+    this.sound.src = "./sounds/boom.wav"
   }
   update() {
+    // Play sounds only once
+    if (this.frame === 0) {
+      this.sound.play();
+    }
     this.timer++;
     // For every x frames, only THEN animate the next frame - slowing it down
     if(this.timer % 7 === 0) {
@@ -44,8 +52,8 @@ class Explosion {
   }
   draw() {
     // Next, what if we want to make each cloud rotate randomly as we make explosions?
-    ctx.save();
-    ctx.translate(this.x, this.y);
+    ctx.save(); // saves the translate rotation of 1 image draw 
+    ctx.translate(this.x, this.y); // this affects the destination x, y below in .drawImage()
     ctx.rotate(this.angle);
     ctx.drawImage(
       this.image,
@@ -53,12 +61,12 @@ class Explosion {
       0, // Since we only have 1 row in this sprite sheet, always at 0
       this.spriteWidth, // "cropping UNTIL" sprite's dimensions
       this.spriteHeight,
-      this.x, // "draw STARTING AT" x, y coords
-      this.y,
+      0 - this.width / 2, // "draw STARTING AT" 0, 0 (still this.x, this.y because of ctx.translate(this.x, this.y))
+      0 - this.height / 2, // but offset by half its dimensions so it's centered on click
       this.width, // "UNTIL" canvas dimensions (in this case, scaled to art)
       this.height
     );
-    ctx.restore();
+    ctx.restore(); // and again, making sure we come back to the base rotation on next call
   }
 }
 
