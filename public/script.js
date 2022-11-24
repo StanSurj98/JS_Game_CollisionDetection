@@ -18,17 +18,22 @@ class Explosion {
     this.spriteWidth = 200;
     this.spriteHeight = 178;
     // Scale it on canvas to sprite sheet's frame size
-    this.width = this.spriteWidth * 0.5;
-    this.height = this.spriteHeight * 0.5;
+    this.width = this.spriteWidth * 0.7;
+    this.height = this.spriteHeight * 0.7;
     // Multiplication is more performant in JS, so instead of x / 2 => x * 0.5
     this.image = new Image();
     this.image.src = "./images/boom.png";
 
     // Animation frames
     this.frame = 0;
+    this.timer = 0;
   }
   update() {
-    this.frame++;
+    this.timer++;
+    // For every x frames, only THEN animate the next frame - slowing it down
+    if(this.timer % 7 === 0) {
+      this.frame ++;
+    }
   }
   draw() {
     // ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
@@ -46,17 +51,25 @@ class Explosion {
   }
 }
 
-// We will add events to call the cloud animation now
+// ---- Add events to call the cloud animation now
 window.addEventListener("click", function (e) {
   console.log("Clicked: ", e);
-  ctx.fillStyle = "white";
-  ctx.fillRect(
-    // this offset is for position of canvas
-    e.x - canvasPosition.left - 25,
-    // but also half the size of the object being drawn
-    e.y - canvasPosition.top - 25,  
-    // then you get exact center click | should probably pull these into variables
-    50,
-    50
-  );
+  let positionX = e.x - canvasPosition.left;
+  let positionY = e.y - canvasPosition.top;
+  // Store our active explosions into the empty array
+  explosions.push(new Explosion(positionX, positionY));
 });
+
+// ---- Main Animation Sequences
+const animate = () => {
+  // ---- Always clear old frames at the beginning
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+  // ---- Loop thru all active explosions, call its class methods
+  for (let i = 0; i < explosions.length; i++) {
+    explosions[i].update();
+    explosions[i].draw();
+  }
+  requestAnimationFrame(animate); 
+};
+animate();
