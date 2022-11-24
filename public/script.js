@@ -13,14 +13,19 @@ const explosions = [];
 
 class Explosion {
   constructor(x, y) {
-    this.x = x;
-    this.y = y;
+    // Dimension of each frame
     this.spriteWidth = 200;
     this.spriteHeight = 178;
-    // Scale it on canvas to sprite sheet's frame size
+    // Scale it on canvas
     this.width = this.spriteWidth * 0.7;
     this.height = this.spriteHeight * 0.7;
     // Multiplication is more performant in JS, so instead of x / 2 => x * 0.5
+
+    // It makes sense to offset for centering INSIDE class since we have access to size
+    this.x = x - this.width * 0.5; // again, for centering offset by half its dimensions
+    this.y = y - this.height * 0.5;
+
+    // Sprite Img Source
     this.image = new Image();
     this.image.src = "./images/boom.png";
 
@@ -53,7 +58,7 @@ class Explosion {
 
 // ---- Add events to call the cloud animation now
 window.addEventListener("click", function (e) {
-  console.log("Clicked: ", e);
+  // console.log("Clicked: ", e);
   let positionX = e.x - canvasPosition.left;
   let positionY = e.y - canvasPosition.top;
   // Store our active explosions into the empty array
@@ -69,6 +74,11 @@ const animate = () => {
   for (let i = 0; i < explosions.length; i++) {
     explosions[i].update();
     explosions[i].draw();
+    // Here we can check if explosions has run thru its entire animation frames
+    if (explosions[i].frame > 5) {
+      explosions.splice(i, 1); // we'll delete that particular explosion at that index
+      i--; // making sure to move index back by 1 since its neighbour is now gone
+    }
   }
   requestAnimationFrame(animate); 
 };
