@@ -4,8 +4,9 @@ const canvas = document.getElementById("canvas1");
 const ctx = canvas.getContext("2d");
 canvas.width = 500;
 canvas.height = 700;
-ctx.fillStyle = "white";
-ctx.fillRect(50, 50, 100, 150);
+// For "offsetting" the canvas position with our click event below
+let canvasPosition = canvas.getBoundingClientRect(); // returns object with measurements
+console.log("Canvas Position: ", canvasPosition);
 
 // To hold all of our explosion objects upon collision
 const explosions = [];
@@ -40,15 +41,22 @@ class Explosion {
       this.x, // "draw STARTING AT" x, y coords
       this.y,
       this.width, // "UNTIL" canvas dimensions (in this case, scaled to art)
-      this.height,
+      this.height
     );
   }
 }
 
-
 // We will add events to call the cloud animation now
-window.addEventListener("click", function(e) {
+window.addEventListener("click", function (e) {
   console.log("Clicked: ", e);
-  ctx.fillStyle = 'white';
-  ctx.fillRect(e.x, e.y, 50, 50);
-})
+  ctx.fillStyle = "white";
+  ctx.fillRect(
+    // this offset is for position of canvas
+    e.x - canvasPosition.left - 25,
+    // but also half the size of the object being drawn
+    e.y - canvasPosition.top - 25,  
+    // then you get exact center click | should probably pull these into variables
+    50,
+    50
+  );
+});
