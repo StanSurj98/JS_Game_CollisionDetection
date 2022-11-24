@@ -32,6 +32,8 @@ class Explosion {
     // Animation frames
     this.frame = 0;
     this.timer = 0;
+    // For Rotating Animation
+    this.angle = Math.random() * 6.2; // Roughly the Radian of a circle 360deg
   }
   update() {
     this.timer++;
@@ -41,7 +43,10 @@ class Explosion {
     }
   }
   draw() {
-    // ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+    // Next, what if we want to make each cloud rotate randomly as we make explosions?
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
     ctx.drawImage(
       this.image,
       this.spriteWidth * this.frame, // Single Frame, remember this is where we CROP
@@ -53,6 +58,7 @@ class Explosion {
       this.width, // "UNTIL" canvas dimensions (in this case, scaled to art)
       this.height
     );
+    ctx.restore();
   }
 }
 
@@ -70,10 +76,6 @@ const createExplosion = (e) => {
 window.addEventListener("click", function (e) {
   createExplosion(e);
 });
-// This is on mouse move like a trail effect!
-// window.addEventListener("mousemove", function(e) {
-//   createExplosion(e);
-// });
 
 
 // ---- Main Animation Sequences
